@@ -1,0 +1,13 @@
+{
+  "name": "good-first-issue-tracker",
+  "version": "1.0.0",
+  "description": "Tracks good first issues from GitHub and sends Gmail digest",
+  "main": "tracker.js",
+  "scripts": {
+    "start": "node tracker.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.13",
+    "node-fetch": "^3.3.2"
+  }
+}
