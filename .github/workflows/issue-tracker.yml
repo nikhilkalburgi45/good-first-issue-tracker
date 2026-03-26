@@ -2,13 +2,13 @@ name: Good First Issue Tracker
 
 on:
   schedule:
-    - cron: "*/30 * * * *" # Runs every 30 minutes
-  workflow_dispatch: # Allows you to click "Run workflow" manually
+    - cron: "*/30 * * * *"  # Runs every 30 minutes
+  workflow_dispatch:         # Manual trigger
 
 jobs:
   track:
     runs-on: ubuntu-latest
-    # Added permissions so the bot can commit seen.json back to the repo
+    # Crucial: allows the bot to update seen.json in your repo
     permissions:
       contents: write
 
@@ -30,10 +30,10 @@ jobs:
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Automatically provided by GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/tracker.js
 
-      - name: Commit seen.json changes
+      - name: Save memory (seen.json)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
