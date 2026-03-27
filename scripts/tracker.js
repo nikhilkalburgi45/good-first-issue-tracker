@@ -45,6 +45,8 @@ async function main() {
   const intermediates = [];
   const advanced = [];
 
+  const MAX_AGE_HOURS = 168; // 7 days — change to 48 if you want strict 2 days
+
   for (const repo of repos) {
     try {
       const issues = await fetchIssues(repo.full_name);
@@ -52,6 +54,11 @@ async function main() {
       for (const issue of issues) {
         if (seen.has(issue.id)) continue;
         if (isBlacklisted(issue, USER_PREFERENCES.titleBlacklist)) continue;
+
+        // Hard age filter — skip issues older than MAX_AGE_HOURS
+        const ageHours =
+          (Date.now() - new Date(issue.created_at)) / (1000 * 60 * 60);
+        if (ageHours > MAX_AGE_HOURS) continue;
 
         const entry = {
           id: issue.id,
@@ -61,6 +68,7 @@ async function main() {
           comments: issue.comments,
           score: scoreIssue(issue, repo),
           createdAt: issue.created_at,
+          ageHours: Math.round(ageHours),
         };
 
         if (isBeginner(issue)) beginners.push(entry);
@@ -100,7 +108,7 @@ async function main() {
     saveSeen(seen);
     console.log("Sent:", top.length);
   } else {
-    console.log("No new issues found");
+    console.log("No new issues found within last", MAX_AGE_HOURS, "hours");
   }
 }
 
