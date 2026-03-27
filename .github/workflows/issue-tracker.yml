@@ -1,14 +1,14 @@
+```yaml
 name: Good First Issue Tracker
 
 on:
   schedule:
-    - cron: "*/30 * * * *"  # Runs every 30 minutes
-  workflow_dispatch:         # Manual trigger
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
 
 jobs:
   track:
     runs-on: ubuntu-latest
-    # Crucial: allows the bot to update seen.json in your repo
     permissions:
       contents: write
 
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install dependencies
         run: |
@@ -28,9 +28,9 @@ jobs:
 
       - name: Run tracker
         env:
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: node scripts/tracker.js
 
       - name: Save memory (seen.json)
@@ -40,3 +40,4 @@ jobs:
           git add scripts/seen.json || true
           git commit -m "chore: update seen issues [skip ci]" || true
           git push
+```
