@@ -1,21 +1,19 @@
 [
   {
-    "name": "mongo-express",
-    "full_name": "mongo-express/mongo-express",
-    "stars": 14200,
-    "difficulty": "beginner",
-    "priority": 2,
-    "tags": ["node", "express", "mongodb"],
-    "last_updated": "2026-01-01"
-  },
-  {
-    "name": "appsmith",
-    "full_name": "appsmithorg/appsmith",
-    "stars": 33000,
+    "name": "nest",
+    "full_name": "nestjs/nest",
+    "stars": 67000,
     "difficulty": "intermediate",
     "priority": 1,
-    "tags": ["node", "docker", "redis"],
-    "last_updated": "2026-01-01"
+    "tags": ["node", "backend", "javascript"]
+  },
+  {
+    "name": "next.js",
+    "full_name": "vercel/next.js",
+    "stars": 127000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["nextjs", "react", "javascript"]
   },
   {
     "name": "strapi",
@@ -23,44 +21,23 @@
     "stars": 62000,
     "difficulty": "intermediate",
     "priority": 1,
-    "tags": ["node", "cms", "api"],
-    "last_updated": "2026-01-01"
+    "tags": ["node", "backend", "javascript"]
   },
   {
-    "name": "n8n",
-    "full_name": "n8n-io/n8n",
-    "stars": 45000,
-    "difficulty": "intermediate",
-    "priority": 1,
-    "tags": ["node", "automation", "workflow"],
-    "last_updated": "2026-01-01"
-  },
-  {
-    "name": "freecodecamp",
-    "full_name": "freeCodeCamp/freeCodeCamp",
-    "stars": 402000,
+    "name": "socket.io",
+    "full_name": "socketio/socket.io",
+    "stars": 60000,
     "difficulty": "beginner",
     "priority": 2,
-    "tags": ["node", "learning", "backend"],
-    "last_updated": "2026-01-01"
+    "tags": ["node", "javascript", "backend"]
   },
   {
-    "name": "prisma",
-    "full_name": "prisma/prisma",
-    "stars": 44000,
+    "name": "supabase",
+    "full_name": "supabase/supabase",
+    "stars": 72000,
     "difficulty": "intermediate",
     "priority": 1,
-    "tags": ["node", "orm", "database"],
-    "last_updated": "2026-01-01"
-  },
-  {
-    "name": "medusa",
-    "full_name": "medusajs/medusa",
-    "stars": 26000,
-    "difficulty": "intermediate",
-    "priority": 1,
-    "tags": ["node", "express", "ecommerce"],
-    "last_updated": "2026-01-01"
+    "tags": ["sql", "backend", "javascript"]
   },
   {
     "name": "hoppscotch",
@@ -68,17 +45,87 @@
     "stars": 65000,
     "difficulty": "beginner",
     "priority": 2,
-    "tags": ["api", "tools"],
-    "last_updated": "2026-01-01"
+    "tags": ["node", "javascript"]
   },
   {
-    "name": "calcom",
+    "name": "nocodb",
+    "full_name": "nocodb/nocodb",
+    "stars": 47000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["sql", "node", "javascript"]
+  },
+  {
+    "name": "prisma",
+    "full_name": "prisma/prisma",
+    "stars": 39000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["sql", "node", "javascript"]
+  },
+  {
+    "name": "cal.com",
     "full_name": "calcom/cal.com",
     "stars": 33000,
     "difficulty": "intermediate",
     "priority": 1,
-    "tags": ["node", "scheduling"],
-    "last_updated": "2026-01-01"
+    "tags": ["node", "nextjs", "sql"]
+  },
+  {
+    "name": "appsmith",
+    "full_name": "appsmithorg/appsmith",
+    "stars": 33000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "docker", "redis"]
+  },
+  {
+    "name": "fastify",
+    "full_name": "fastify/fastify",
+    "stars": 32000,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["node", "express", "javascript"]
+  },
+  {
+    "name": "directus",
+    "full_name": "directus/directus",
+    "stars": 27000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "sql", "javascript"]
+  },
+  {
+    "name": "medusa",
+    "full_name": "medusajs/medusa",
+    "stars": 26000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "express", "backend"]
+  },
+  {
+    "name": "mongoose",
+    "full_name": "Automattic/mongoose",
+    "stars": 26000,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["mongodb", "node", "javascript"]
+  },
+  {
+    "name": "typeorm",
+    "full_name": "typeorm/typeorm",
+    "stars": 34000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["sql", "node", "javascript"]
+  },
+  {
+    "name": "sequelize",
+    "full_name": "sequelize/sequelize",
+    "stars": 29000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["sql", "node", "javascript"]
   },
   {
     "name": "tooljet",
@@ -86,7 +133,30 @@
     "stars": 28000,
     "difficulty": "intermediate",
     "priority": 1,
-    "tags": ["node", "lowcode"],
-    "last_updated": "2026-01-01"
+    "tags": ["node", "docker", "javascript"]
+  },
+  {
+    "name": "ioredis",
+    "full_name": "redis/ioredis",
+    "stars": 14000,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["redis", "node", "javascript"]
+  },
+  {
+    "name": "mongo-express",
+    "full_name": "mongo-express/mongo-express",
+    "stars": 14200,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["mongodb", "node", "express"]
+  },
+  {
+    "name": "axios",
+    "full_name": "axios/axios",
+    "stars": 105000,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["javascript", "node"]
   }
 ]

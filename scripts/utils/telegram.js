@@ -1,9 +1,16 @@
-// scripts/utils/telegram.js
-
 import fetch from "node-fetch";
 
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN; 
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+const difficultyLabel = (issue) => {
+  // re-derive from score heuristic — just tag passed in
+  return issue.level === "beginner"
+    ? "🟢 Beginner"
+    : issue.level === "advanced"
+      ? "🔴 Advanced"
+      : "🟡 Intermediate";
+};
 
 export async function sendTelegram(issues) {
   if (!TOKEN || !CHAT_ID) {
@@ -11,27 +18,56 @@ export async function sendTelegram(issues) {
     return;
   }
 
-  const message = issues.map((i, idx) =>
-    `🔥 *${idx + 1}. ${i.title}*\n` +
-    `📦 ${i.repo}\n` +
-    `💬 Comments: ${i.comments}\n` +
-    `🔗 ${i.url}`
-  ).join("\n\n");
+  for (const issue of issues) {
+    const ageHours = Math.round(
+      (Date.now() - new Date(issue.createdAt)) / (1000 * 60 * 60),
+    );
+    const ageLabel =
+      ageHours < 48
+        ? `🆕 ${ageHours}h ago`
+        : `🕐 ${Math.round(ageHours / 24)}d ago`;
 
-  const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+    const text =
+      `*${issue.title}*\n\n` +
+      `📦 \`${issue.repo}\`\n` +
+      `💬 Comments: ${issue.comments}  ${ageLabel}`;
 
-  const res = await fetch(url, {
+    const body = {
+      chat_id: CHAT_ID,
+      text,
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [[{ text: "🔗 Open Issue", url: issue.url }]],
+      },
+    };
+
+    const res = await fetch(
+      `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    );
+
+    const data = await res.json();
+    if (!data.ok) console.error("Telegram error:", data.description);
+
+    // Small delay to avoid Telegram rate limiting
+    await new Promise((r) => setTimeout(r, 300));
+  }
+}
+
+export async function sendErrorAlert(message) {
+  if (!TOKEN || !CHAT_ID) return;
+
+  await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       chat_id: CHAT_ID,
-      text: message,
-      parse_mode: "Markdown"
-    })
+      text: `⚠️ *Tracker Error*\n\`${message}\``,
+      parse_mode: "Markdown",
+    }),
   });
-
-  const data = await res.json();
-  console.log("Telegram:", data);
 }

@@ -1,12 +1,12 @@
-name: Good First Issue Tracker
+name: Daily Digest
 
 on:
   schedule:
-    - cron: "0 */3 * * *" # Every 3 hours
+    - cron: "30 3 * * *" # 9am IST = 3:30am UTC
   workflow_dispatch:
 
 jobs:
-  track:
+  digest:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -22,6 +22,25 @@ jobs:
 
       - name: Install dependencies
         run: cd scripts && npm install
+
+      - name: Send digest header
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node -e "
+          import('./scripts/utils/telegram.js').then(({ sendErrorAlert }) => {
+            fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: process.env.TELEGRAM_CHAT_ID,
+                text: '🌅 *Good Morning Nikkhil\\!*\nHere are today\\'s best issues to contribute to 👇',
+                parse_mode: 'Markdown'
+              })
+            }).then(r => r.json()).then(console.log)
+          })
+          "
 
       - name: Run tracker
         env:

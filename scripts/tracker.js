@@ -1,16 +1,18 @@
-// scripts/tracker.js
-
 import fs from "fs";
 import path from "path";
 import { fetchIssues } from "./utils/github.js";
-import { isBeginner, isIntermediate, scoreIssue } from "./utils/scorer.js";
-import { sendTelegram } from "./utils/telegram.js";
+import {
+  isBeginner,
+  isIntermediate,
+  isAdvanced,
+  scoreIssue,
+  isBlacklisted,
+} from "./utils/scorer.js";
+import { sendTelegram, sendErrorAlert } from "./utils/telegram.js";
 import { USER_PREFERENCES } from "./config.js";
 
 const repoPath = path.join(process.cwd(), "scripts/repoList.json");
 const seenPath = path.join(process.cwd(), "scripts/seen.json");
-
-// ─── Loaders ─────────────────────
 
 function loadRepos() {
   return JSON.parse(fs.readFileSync(repoPath));
@@ -22,35 +24,26 @@ function loadSeen() {
 }
 
 function saveSeen(seen) {
-  fs.writeFileSync(seenPath, JSON.stringify([...seen].slice(-1000)));
+  fs.writeFileSync(seenPath, JSON.stringify([...seen].slice(-2000)));
 }
-
-// ─── Repo Filter ─────────────────
 
 function filterRepos(repoList) {
   return repoList
-    .filter(r => r.stars >= USER_PREFERENCES.minStars)
-    .filter(r =>
-      USER_PREFERENCES.difficulty === "both"
-        ? true
-        : r.difficulty === USER_PREFERENCES.difficulty
-    )
-    .filter(r =>
-      r.tags.some(tag =>
-        USER_PREFERENCES.preferredTags.includes(tag)
-      )
+    .filter((r) => r.stars >= USER_PREFERENCES.minStars)
+    .filter((r) =>
+      r.tags.some((tag) => USER_PREFERENCES.preferredTags.includes(tag)),
     )
     .sort((a, b) => b.priority - a.priority)
     .slice(0, USER_PREFERENCES.maxRepos);
 }
 
-// ─── Main ───────────────────────
-
 async function main() {
   const repos = filterRepos(loadRepos());
   const seen = loadSeen();
 
-  let collected = [];
+  const beginners = [];
+  const intermediates = [];
+  const advanced = [];
 
   for (const repo of repos) {
     try {
@@ -58,42 +51,60 @@ async function main() {
 
       for (const issue of issues) {
         if (seen.has(issue.id)) continue;
+        if (isBlacklisted(issue, USER_PREFERENCES.titleBlacklist)) continue;
 
-        const beginner = isBeginner(issue);
-        const intermediate = isIntermediate(issue);
-
-        if (!beginner && !intermediate) continue;
-
-        collected.push({
+        const entry = {
           id: issue.id,
           title: issue.title,
           url: issue.html_url,
           repo: repo.full_name,
           comments: issue.comments,
-          score: scoreIssue(issue, repo)
-        });
-      }
+          score: scoreIssue(issue, repo),
+          createdAt: issue.created_at,
+        };
 
+        if (isBeginner(issue)) beginners.push(entry);
+        else if (isAdvanced(issue)) advanced.push(entry);
+        else if (isIntermediate(issue)) intermediates.push(entry);
+      }
     } catch (e) {
-      console.warn("Error:", repo.full_name);
+      console.warn("Error fetching:", repo.full_name, e.message);
     }
   }
 
-  // Sort + pick top
-  collected.sort((a, b) => b.score - a.score);
+  // Sort each bucket by score
+  beginners.sort((a, b) => b.score - a.score);
+  intermediates.sort((a, b) => b.score - a.score);
+  advanced.sort((a, b) => b.score - a.score);
 
-  const top = collected.slice(0, USER_PREFERENCES.topIssuesLimit);
+  const {
+    beginner: bCount,
+    intermediate: iCount,
+    advanced: aCount,
+  } = USER_PREFERENCES.issuesMix;
+
+  const top = [
+    ...beginners.slice(0, bCount),
+    ...intermediates.slice(0, iCount),
+    ...advanced.slice(0, aCount),
+  ];
+
+  console.log(
+    `Found — Beginner: ${beginners.length}, Intermediate: ${intermediates.length}, Advanced: ${advanced.length}`,
+  );
+  console.log(`Sending: ${top.length} issues`);
 
   if (top.length > 0) {
     await sendTelegram(top);
-
-    top.forEach(i => seen.add(i.id));
+    top.forEach((i) => seen.add(i.id));
     saveSeen(seen);
-
     console.log("Sent:", top.length);
   } else {
-    console.log("No issues found");
+    console.log("No new issues found");
   }
 }
 
-main().catch(console.error);
+main().catch(async (err) => {
+  console.error(err);
+  await sendErrorAlert(err.message);
+});
