@@ -2,7 +2,7 @@
 
 import fetch from "node-fetch";
 
-const TOKEN = process.env.TELEGRAM_TOKEN;
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN; 
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 export async function sendTelegram(issues) {
