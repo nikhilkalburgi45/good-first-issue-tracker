@@ -1,4 +1,3 @@
-```yaml
 name: Good First Issue Tracker
 
 on:
@@ -40,4 +39,3 @@ jobs:
           git add scripts/seen.json || true
           git commit -m "chore: update seen issues [skip ci]" || true
           git push
-```
