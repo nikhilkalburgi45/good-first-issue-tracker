@@ -1,0 +1,92 @@
+[
+  {
+    "name": "mongo-express",
+    "full_name": "mongo-express/mongo-express",
+    "stars": 14200,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["node", "express", "mongodb"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "appsmith",
+    "full_name": "appsmithorg/appsmith",
+    "stars": 33000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "docker", "redis"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "strapi",
+    "full_name": "strapi/strapi",
+    "stars": 62000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "cms", "api"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "n8n",
+    "full_name": "n8n-io/n8n",
+    "stars": 45000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "automation", "workflow"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "freecodecamp",
+    "full_name": "freeCodeCamp/freeCodeCamp",
+    "stars": 402000,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["node", "learning", "backend"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "prisma",
+    "full_name": "prisma/prisma",
+    "stars": 44000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "orm", "database"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "medusa",
+    "full_name": "medusajs/medusa",
+    "stars": 26000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "express", "ecommerce"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "hoppscotch",
+    "full_name": "hoppscotch/hoppscotch",
+    "stars": 65000,
+    "difficulty": "beginner",
+    "priority": 2,
+    "tags": ["api", "tools"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "calcom",
+    "full_name": "calcom/cal.com",
+    "stars": 33000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "scheduling"],
+    "last_updated": "2026-01-01"
+  },
+  {
+    "name": "tooljet",
+    "full_name": "ToolJet/ToolJet",
+    "stars": 28000,
+    "difficulty": "intermediate",
+    "priority": 1,
+    "tags": ["node", "lowcode"],
+    "last_updated": "2026-01-01"
+  }
+]
