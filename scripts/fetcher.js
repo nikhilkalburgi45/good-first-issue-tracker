@@ -1,10 +1,10 @@
 import fetch from "node-fetch";
-import { REPOS, LABEL_CATEGORIES, BATCH_SIZE } from "./config.js";
+import { REPOS } from "./config.js";
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 function getDateFilter() {
-  const d = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const d = new Date(Date.now() - 72 * 60 * 60 * 1000); // 72h window
   return d.toISOString().split("T")[0];
 }
 
@@ -28,49 +28,58 @@ async function searchGitHub(query) {
   return data.items || [];
 }
 
-function chunkArray(arr, size) {
-  const chunks = [];
-  for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
-  return chunks;
-}
+// Wait helper
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function fetchAllIssues() {
-  const dateFilter  = getDateFilter();
-  const repoBatches = chunkArray(REPOS, BATCH_SIZE);
-  const seen        = new Map(); // dedupe within fetch
+  const dateFilter = getDateFilter();
+  const seen = new Map();
 
-  for (const [category, labels] of Object.entries(LABEL_CATEGORIES)) {
-    for (const label of labels) {
-      for (const batch of repoBatches) {
-        const repoQuery = batch.map(r => `repo:${r.full_name}`).join(" ");
-        const query = `is:issue is:open label:"${label}" ${repoQuery} updated:>${dateFilter}`;
+  // 3 queries total — one per category
+  // All repos combined in one query per category
+  const repoQuery = REPOS.map((r) => `repo:${r.full_name}`).join(" ");
 
-        try {
-          const issues = await searchGitHub(query);
+  const queries = [
+    {
+      category: "beginner",
+      query: `is:issue is:open label:"good first issue" ${repoQuery} updated:>${dateFilter}`,
+    },
+    {
+      category: "intermediate",
+      query: `is:issue is:open label:"bug" ${repoQuery} updated:>${dateFilter}`,
+    },
+    {
+      category: "advanced",
+      query: `is:issue is:open label:"performance" ${repoQuery} updated:>${dateFilter}`,
+    },
+  ];
 
-          for (const issue of issues) {
-            if (seen.has(issue.id)) continue;
+  for (const { category, query } of queries) {
+    try {
+      const issues = await searchGitHub(query);
+      console.log(`[${category}] Found: ${issues.length}`);
 
-            const repoFullName = issue.repository_url.replace(
-              "https://api.github.com/repos/", ""
-            );
-            const repoConfig = REPOS.find(r => r.full_name === repoFullName);
+      for (const issue of issues) {
+        if (seen.has(issue.id)) continue;
 
-            seen.set(issue.id, {
-              ...issue,
-              category,
-              repoFullName,
-              repoWeight: repoConfig?.weight || 1.0,
-            });
-          }
+        const repoFullName = issue.repository_url.replace(
+          "https://api.github.com/repos/",
+          "",
+        );
+        const repoConfig = REPOS.find((r) => r.full_name === repoFullName);
 
-          // Respect GitHub Search rate limit (30 req/min)
-          await new Promise(r => setTimeout(r, 2100));
-
-        } catch (e) {
-          console.warn(`Search failed [${category}/${label}]:`, e.message);
-        }
+        seen.set(issue.id, {
+          ...issue,
+          category,
+          repoFullName,
+          repoWeight: repoConfig?.weight || 1.0,
+        });
       }
+
+      // 3 second gap between queries — well within 30 req/min limit
+      await wait(3000);
+    } catch (e) {
+      console.warn(`Search failed [${category}]:`, e.message);
     }
   }
 

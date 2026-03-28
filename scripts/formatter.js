@@ -1,11 +1,15 @@
 import { getPriorityBucket } from "./scorer.js";
 
-const PRIORITY_EMOJI  = { high: "🔴", medium: "🟡", low: "🟢" };
-const CATEGORY_LABEL  = {
+const PRIORITY_EMOJI = { high: "🔴", medium: "🟡", low: "🟢" };
+const CATEGORY_LABEL = {
   beginner:     "🟢 Beginner",
   intermediate: "🟡 Intermediate",
   advanced:     "🔴 Advanced",
 };
+
+function esc(text) {
+  return String(text).replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
+}
 
 export function formatIssue(issue) {
   const priority    = getPriorityBucket(issue.finalScore);
@@ -14,20 +18,15 @@ export function formatIssue(issue) {
     : updatedHours < 24 ? `${updatedHours}h ago`
     : `${Math.round(updatedHours / 24)}d ago`;
 
-  const topLabels = issue.labels.slice(0, 3).map(l => `#${l.name}`).join(" ");
+  const topLabels = issue.labels.slice(0, 3).map(l => `\#${esc(l.name)}`).join(" ");
   const category  = CATEGORY_LABEL[issue.category] || "🟡 Intermediate";
 
   const text =
     `${PRIORITY_EMOJI[priority]} *${esc(issue.title)}*\n\n` +
-    `📦 \`${issue.repoFullName}\`\n` +
-    `${category}  \\|  ⭐ Score: ${issue.finalScore}/10\n` +
-    `💬 ${issue.comments} comments  🕐 ${ageLabel}\n` +
+    `📦 \`${esc(issue.repoFullName)}\`\n` +
+    `${esc(category)}  \\|  ⭐ Score: ${esc(issue.finalScore)}/10\n` +
+    `💬 ${esc(issue.comments)} comments  🕐 ${esc(ageLabel)}\n` +
     `🏷 ${topLabels || "no labels"}`;
 
   return { text, url: issue.html_url };
-}
-
-// Escape MarkdownV2 special chars
-function esc(text) {
-  return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
 }
