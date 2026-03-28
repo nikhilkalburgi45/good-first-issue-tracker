@@ -1,13 +1,13 @@
 {
   "name": "good-first-issue-tracker",
-  "version": "1.0.0",
-  "description": "Tracks good first issues from GitHub and sends Gmail digest",
-  "main": "tracker.js",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Smart GitHub issue tracker with Redis deduplication",
   "scripts": {
-    "start": "node tracker.js"
+    "start": "node scripts/tracker.js"
   },
   "dependencies": {
-    "nodemailer": "^6.9.13",
+    "@upstash/redis": "^1.34.0",
     "node-fetch": "^3.3.2"
   }
 }
